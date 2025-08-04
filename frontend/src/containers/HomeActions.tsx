@@ -1,7 +1,12 @@
 import React from 'react';
 import { Button } from '../components/Button';
 
-const HomeActions: React.FC = () => {
+interface HomeActionsProps {
+    onSignIn: () => void;
+    onSignUp: () => void;
+}
+
+const HomeActions: React.FC<HomeActionsProps> = ({ onSignIn, onSignUp }) => {
     const handleGuest = () => {
         const video = document.querySelector('video') as HTMLVideoElement;
         video.play();
@@ -10,10 +15,12 @@ const HomeActions: React.FC = () => {
 
     const handleSignIn = () => {
         console.log('Sign In clicked');
+        onSignIn();
     };
 
     const handleSignUp = () => {
         console.log('Sign Up clicked');
+        onSignUp();
     };
 
     const buttonConfig = [
