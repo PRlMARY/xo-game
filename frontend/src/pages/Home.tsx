@@ -1,12 +1,22 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import ArcadeGif from '../assets/arcade-machine.mp4';
 import HomeActions from '../containers/HomeActions';
 import Form from '../containers/Form';
+import { useAuth } from '../contexts/AuthContext';
+import MainMenu from '../containers/MainMenu';
+import CreateGame from '../containers/CreateGame';
 
-type ViewType = 'home' | 'signin' | 'signup';
+type ViewType = 'mainmenu' | 'signin' | 'signup' | 'creategame';
 
 const Home: React.FC = () => {
-  const [currentView, setCurrentView] = useState<ViewType>('home');
+  const [currentView, setCurrentView] = useState<ViewType>('mainmenu');
+  const { isAuthenticated, logout } = useAuth();
+
+  useEffect(() => {
+    if (!isAuthenticated) {
+      setCurrentView('mainmenu');
+    }
+  }, [isAuthenticated]);
 
   const handleSignIn = () => {
     setCurrentView('signin');
@@ -17,7 +27,32 @@ const Home: React.FC = () => {
   };
 
   const handleBackToHome = () => {
-    setCurrentView('home');
+    setCurrentView('mainmenu');
+  };
+
+  const handlePlay = () => {
+    const video = document.querySelector('video') as HTMLVideoElement;
+    video.play();
+    setCurrentView('creategame');
+  };
+
+  const handleHistory = () => {
+  };
+
+  const handleLogout = () => {
+    logout();
+    setCurrentView('mainmenu');
+  };
+
+  const handleBackFromCreateGame = () => {
+    const video = document.querySelector('video') as HTMLVideoElement;
+    video.currentTime = 0;
+    video.pause();
+    if (isAuthenticated) {
+      setCurrentView('mainmenu');
+    } else {
+      setCurrentView('mainmenu');
+    }
   };
 
   return (
@@ -25,17 +60,28 @@ const Home: React.FC = () => {
       <div className="relative">
         <video src={ArcadeGif} muted className="w-75" />
       </div>
-      {currentView === 'home' && (
-        <HomeActions 
+      {currentView === 'mainmenu' && !isAuthenticated && (
+        <HomeActions
           onSignIn={handleSignIn}
           onSignUp={handleSignUp}
+          onPlay={handlePlay}
+        />
+      )}
+      {currentView === 'mainmenu' && isAuthenticated && (
+        <MainMenu
+          onPlay={handlePlay}
+          onHistory={handleHistory}
+          onLogout={handleLogout}
         />
       )}
       {(currentView === 'signin' || currentView === 'signup') && (
-        <Form 
+        <Form
           formType={currentView}
           onBack={handleBackToHome}
         />
+      )}
+      {currentView === 'creategame' && (
+        <CreateGame onBack={handleBackFromCreateGame} />
       )}
     </div>
   );

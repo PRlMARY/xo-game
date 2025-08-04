@@ -1,10 +1,13 @@
 import Home from "./pages/Home";
+import { AuthProvider } from "./contexts/AuthContext";
 
 function App() {
   return (
-    <div className="app">
-      <Home />
-    </div>
+    <AuthProvider>
+      <div className="app">
+        <Home />
+      </div>
+    </AuthProvider>
   );
 }
 

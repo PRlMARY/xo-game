@@ -4,12 +4,18 @@ export default function Input({
   label, 
   type, 
   value, 
-  onChange 
+  min,
+  onChange,
+  required,
+  disabled = false,
 }: { 
   label: string; 
   type: string; 
   value: string; 
+  min?: string;
   onChange: (e: React.ChangeEvent<HTMLInputElement>) => void;
+  required?: boolean;
+  disabled?: boolean;
 }) {
 
   return (
@@ -17,9 +23,11 @@ export default function Input({
       type={type}
       label={label}
       value={value}
-      isRequired={true}
-      variant="underlined"
+      min={min}
       onChange={onChange}
+      variant="underlined"
+      isRequired={required}
+      isDisabled={disabled}
       classNames={{
         input: [
             "!text-white",

@@ -1,54 +1,56 @@
 import React from 'react';
 import { Button } from '../components/Button';
+import { useAuth } from '../contexts/AuthContext';
 
-interface HomeActionsProps {
-    onSignIn: () => void;
-    onSignUp: () => void;
+interface MainMenuProps {
     onPlay: () => void;
+    onHistory: () => void;
+    onLogout: () => void;
 }
 
-const HomeActions: React.FC<HomeActionsProps> = ({ onSignIn, onSignUp, onPlay }) => {
-    const handleGuest = () => {
+const MainMenu: React.FC<MainMenuProps> = ({ onPlay, onHistory, onLogout }) => {
+    const { user } = useAuth();
+
+    const handlePlay = () => {
         onPlay();
     };
 
-    const handleSignIn = () => {
-        console.log('Sign In clicked');
-        onSignIn();
+    const handleHistory = () => {
+        onHistory();
     };
 
-    const handleSignUp = () => {
-        console.log('Sign Up clicked');
-        onSignUp();
+    const handleLogout = () => {
+        onLogout();
     };
 
     const buttonConfig = [
         {
-            id: 'guest',
+            id: 'play',
             label: 'PLAY NOW',
             variant: 'teal' as const,
-            onClick: handleGuest,
+            onClick: handlePlay,
         },
         {
-            id: 'signin',
-            label: 'SIGN IN',
+            id: 'history',
+            label: 'VIEW GAME HISTORY',
             variant: 'blue' as const,
-            onClick: handleSignIn
+            onClick: handleHistory
         },
         {
-            id: 'signup',
-            label: 'SIGN UP',
+            id: 'logout',
+            label: 'LOGOUT',
             variant: 'rose' as const,
-            onClick: handleSignUp
+            onClick: handleLogout
         }
     ];
 
     return (
-        <div className="flex-1 flex flex-col items-center justify-start space-y-4 min-w-65 min-h-105">
-            <h1 className="text-center mb-8 text-6xl font-bold text-white">
-                <span className="text-blue-500">X</span><span className="text-rose-500">O</span> GAME
-            </h1>
-            <div className="flex flex-col space-y-4 w-full">
+        <div className="flex flex-col items-center justify-start space-y-4 min-w-65 min-h-105">
+            <div className="text-center">
+                <h1 className="text-5xl font-bold text-white">Welcome!</h1>
+                <p className="text-[18px] text-teal-500">Hello, {user?.username}</p>
+            </div>
+            <div className="flex flex-col gap-4 w-full max-w-md">
                 {buttonConfig.map((button, index) => (
                     <div key={button.id}>
                         <Button
@@ -58,7 +60,7 @@ const HomeActions: React.FC<HomeActionsProps> = ({ onSignIn, onSignUp, onPlay })
                         >
                             {button.label}
                         </Button>
-                        {index === 0 && (
+                        {index === 1 && (
                             <div className="flex items-center mt-4">
                                 <hr className="flex-grow border-t border-gray-400" />
                                 <span className="px-4 text-gray-400 text-md">OR</span>
@@ -67,14 +69,9 @@ const HomeActions: React.FC<HomeActionsProps> = ({ onSignIn, onSignUp, onPlay })
                         )}
                     </div>
                 ))}
-                <div className="text-center">
-                    <p className="text-gray-400 text-md">
-                        Sign in to watch your match replay!
-                    </p>
-                </div>
             </div>
         </div>
     );
 };
 
-export default HomeActions;
+export default MainMenu;
