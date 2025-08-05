@@ -35,9 +35,8 @@ const Button: React.FC<ButtonProps> = ({
             type={type}
             onClick={onClick}
             disabled={disabled}
-            className={`${getVariantClasses()} text-white font-bold py-4 px-4 text-2xl border-4 transition-all duration-200 transform hover: hover:shadow-lg ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg'} ${className}`}
+            className={`${getVariantClasses()} max-w-65 text-white font-bold py-4 px-4 text-2xl border-4 transition-all duration-200 transform hover: hover:shadow-lg ${disabled ? 'opacity-50 cursor-not-allowed' : 'hover:shadow-lg'} ${className}`}
         >
-            <div className="absolute inset-0 bg-gradient-to-r from-transparent via-white/20 to-transparent -translate-x-full group-hover:translate-x-full transition-transform duration-500"></div>
             <span className="relative flex items-center justify-center gap-2">
                 {children}
             </span>

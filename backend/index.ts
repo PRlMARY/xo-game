@@ -2,6 +2,7 @@ import connectDB from "./src/database/connect.db";
 import { Elysia } from "elysia";
 import { cors } from "@elysiajs/cors";
 import { userRoutes } from "./src/routes/userRoutes";
+import { gameRoutes } from "./src/routes/gameRoutes";
 
 connectDB();
 
@@ -11,6 +12,7 @@ const app = new Elysia()
         credentials: true
     }))
     .use(userRoutes)
+    .use(gameRoutes)
     .get('/', () => ({ message: 'XO Game API Server' }))
     .get('/health', () => ({ status: 'healthy', timestamp: new Date().toISOString() }));
 

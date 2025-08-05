@@ -5,12 +5,22 @@ import Form from '../containers/Form';
 import { useAuth } from '../contexts/AuthContext';
 import MainMenu from '../containers/MainMenu';
 import CreateGame from '../containers/CreateGame';
+import Game from '../containers/Game';
+import { gameService } from '../services/gameService';
+import { GameData } from '../types/game';
 
-type ViewType = 'mainmenu' | 'signin' | 'signup' | 'creategame';
+type ViewType = 'mainmenu' | 'signin' | 'signup' | 'creategame' | 'game';
+
+interface GameSettings {
+  rows: number;
+  columns: number;
+  isPvP: boolean;
+}
 
 const Home: React.FC = () => {
   const [currentView, setCurrentView] = useState<ViewType>('mainmenu');
-  const { isAuthenticated, logout } = useAuth();
+  const [gameSettings, setGameSettings] = useState<GameSettings>({ rows: 3, columns: 3, isPvP: false });
+  const { isAuthenticated, logout, user } = useAuth();
 
   useEffect(() => {
     if (!isAuthenticated) {
@@ -48,10 +58,29 @@ const Home: React.FC = () => {
     const video = document.querySelector('video') as HTMLVideoElement;
     video.currentTime = 0;
     video.pause();
-    if (isAuthenticated) {
-      setCurrentView('mainmenu');
-    } else {
-      setCurrentView('mainmenu');
+    setCurrentView('mainmenu');
+  };
+
+  const handleStartGame = (rows: number, columns: number, isPvP: boolean) => {
+    setGameSettings({ rows, columns, isPvP });
+    setCurrentView('game');
+  };
+
+  const handleBackFromGame = () => {
+    setCurrentView('creategame');
+  };
+
+  const handleGameComplete = async (gameData: GameData) => {
+    if (user) {
+      try {
+        const token = localStorage.getItem('token');
+        if (token) {
+          await gameService.saveGameHistory(gameData, token);
+          console.log('Game history saved successfully');
+        }
+      } catch (error) {
+        console.error('Failed to save game history:', error);
+      }
     }
   };
 
@@ -81,7 +110,19 @@ const Home: React.FC = () => {
         />
       )}
       {currentView === 'creategame' && (
-        <CreateGame onBack={handleBackFromCreateGame} />
+        <CreateGame 
+          onBack={handleBackFromCreateGame} 
+          onStartGame={handleStartGame}
+        />
+      )}
+      {currentView === 'game' && (
+        <Game 
+          rows={gameSettings.rows}
+          columns={gameSettings.columns}
+          isPvP={gameSettings.isPvP}
+          onBack={handleBackFromGame}
+          onGameComplete={handleGameComplete}
+        />
       )}
     </div>
   );

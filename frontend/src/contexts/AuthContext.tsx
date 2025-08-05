@@ -73,7 +73,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const response = await apiService.login({ username, password });
             if (response.success && response.user) {
                 dispatch({ type: 'AUTH_SUCCESS', payload: response.user });
-                // Store user data in localStorage for persistence
                 localStorage.setItem('user', JSON.stringify(response.user));
             } else {
                 throw new Error(response.message || 'Login failed');
@@ -91,7 +90,6 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const response = await apiService.signup({ username, password });
             if (response.success && response.user) {
                 dispatch({ type: 'AUTH_SUCCESS', payload: response.user });
-                // Store user data in localStorage for persistence
                 localStorage.setItem('user', JSON.stringify(response.user));
             } else {
                 throw new Error(response.message || 'Signup failed');
