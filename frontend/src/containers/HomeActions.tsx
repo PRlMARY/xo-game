@@ -13,12 +13,10 @@ const HomeActions: React.FC<HomeActionsProps> = ({ onSignIn, onSignUp, onPlay })
     };
 
     const handleSignIn = () => {
-        console.log('Sign In clicked');
         onSignIn();
     };
 
     const handleSignUp = () => {
-        console.log('Sign Up clicked');
         onSignUp();
     };
 

@@ -50,7 +50,7 @@ const MainMenu: React.FC<MainMenuProps> = ({ onPlay, onHistory, onLogout }) => {
                 <h1 className="text-5xl font-bold text-white">Welcome!</h1>
                 <p className="text-[18px] text-teal-500">Hello, {user?.username}</p>
             </div>
-            <div className="flex flex-col gap-4 w-full max-w-md">
+            <div className="flex flex-col gap-4 w-full">
                 {buttonConfig.map((button, index) => (
                     <div key={button.id}>
                         <Button

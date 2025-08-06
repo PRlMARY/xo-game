@@ -1,20 +1,24 @@
-import { Elysia } from 'elysia';
+import { Elysia, t } from 'elysia';
 import { saveGameHistory, getUserGameHistory, getGameStats } from '../controllers/gameController';
 
 export const gameRoutes = new Elysia()
   .group('/api/game', (app) =>
     app
       .post('/save', saveGameHistory, {
-        body: {
-          mode: 'string',
-          settings: {
-            column: 'number',
-            row: 'number'
-          },
-          moves: 'array',
-          winner: 'string',
-          status: 'string'
-        }
+        body: t.Object({
+          mode: t.String(),
+          settings: t.Object({
+            column: t.Number(),
+            row: t.Number()
+          }),
+          moves: t.Array(t.Object({
+            player: t.String(),
+            row: t.Number(),
+            column: t.Number()
+          })),
+          winner: t.Union([t.String(), t.Null()]),
+          status: t.String()
+        })
       })
       .get('/history', getUserGameHistory)
       .get('/stats', getGameStats)

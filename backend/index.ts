@@ -8,15 +8,28 @@ connectDB();
 
 const app = new Elysia()
     .use(cors({
-        origin: ['http://localhost:3000', 'http://localhost:5173'],
-        credentials: true
+        origin: true,
+        credentials: true,
+        methods: ['GET', 'POST', 'PUT', 'DELETE', 'OPTIONS'],
+        allowedHeaders: ['Content-Type', 'Authorization']
     }))
+    .onError(({ code, error, set }) => {
+        console.error('Server Error:', code, error);
+        
+        if (code === 'VALIDATION') {
+            set.status = 400;
+            return { error: 'Validation failed', message: 'Invalid request data' };
+        }
+        
+        set.status = 500;
+        return { error: 'Internal server error', message: 'Something went wrong' };
+    })
     .use(userRoutes)
     .use(gameRoutes)
     .get('/', () => ({ message: 'XO Game API Server' }))
     .get('/health', () => ({ status: 'healthy', timestamp: new Date().toISOString() }));
 
 app.listen(3000, () => {
-    console.log("🚀 Server running on port 3000");
-    console.log("📚 API Documentation: http://localhost:3000/swagger");
+    console.log("Server running on port 3000");
+    console.log("API Documentation: http://localhost:3000/swagger");
 });

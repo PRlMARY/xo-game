@@ -1,5 +1,5 @@
 import { Elysia, t } from 'elysia';
-import { signup, login } from '../controller/userController';
+import { signup, login } from '../controllers/userController';
 
 export const userRoutes = new Elysia({ prefix: '/api/auth' })
     .post('/signup', async ({ body, set }) => {

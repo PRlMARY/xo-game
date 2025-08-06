@@ -22,13 +22,15 @@ const Game: React.FC<GameProps> = ({ rows, columns, isPvP, onBack, onGameComplet
                 <p className="text-xl text-white font-semibold">{getStatusMessage()}</p>
             </div>
 
-            <GameBoard
-                board={gameState.board}
-                onCellClick={makeMove}
-                winner={gameState.winner}
-                rows={rows}
-                columns={columns}
-            />
+            <div className="bg-gray-900/50 backdrop-blur-sm border-2 border-gray-700 p-5">
+                <GameBoard
+                    board={gameState.board}
+                    onCellClick={makeMove}
+                    winner={gameState.winner}
+                    rows={rows}
+                    columns={columns}
+                />
+            </div>
 
             <div className="flex flex-row gap-4 w-full h-fit justify-center items-center">
                 <Button

@@ -1,6 +1,7 @@
 import React, { createContext, useContext, useReducer, useCallback, ReactNode } from 'react';
 import { AuthState, AuthContextType, User } from '../types/auth';
 import { apiService } from '../services/api';
+import CookieService from '../utils/cookies';
 
 type AuthAction =
     | { type: 'AUTH_START' }
@@ -71,9 +72,15 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
         dispatch({ type: 'AUTH_START' });
         try {
             const response = await apiService.login({ username, password });
+            
             if (response.success && response.user) {
                 dispatch({ type: 'AUTH_SUCCESS', payload: response.user });
-                localStorage.setItem('user', JSON.stringify(response.user));
+                CookieService.setUser(response.user);
+                if (response.token) {
+                    CookieService.setToken(response.token);
+                } else {
+                    console.warn('AuthContext: No token in response');
+                }
             } else {
                 throw new Error(response.message || 'Login failed');
             }
@@ -90,7 +97,12 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
             const response = await apiService.signup({ username, password });
             if (response.success && response.user) {
                 dispatch({ type: 'AUTH_SUCCESS', payload: response.user });
-                localStorage.setItem('user', JSON.stringify(response.user));
+                CookieService.setUser(response.user);
+                if (response.token) {
+                    CookieService.setToken(response.token);
+                } else {
+                    console.warn('AuthContext: No token in signup response');
+                }
             } else {
                 throw new Error(response.message || 'Signup failed');
             }
@@ -103,7 +115,7 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
 
     const logout = useCallback((): void => {
         dispatch({ type: 'AUTH_LOGOUT' });
-        localStorage.removeItem('user');
+        CookieService.clearAll();
     }, []);
 
     const clearError = useCallback((): void => {
@@ -111,15 +123,13 @@ export const AuthProvider: React.FC<AuthProviderProps> = ({ children }) => {
     }, []);
 
     React.useEffect(() => {
-        const storedUser = localStorage.getItem('user');
-        if (storedUser) {
-            try {
-                const user = JSON.parse(storedUser);
-                dispatch({ type: 'AUTH_SUCCESS', payload: user });
-            } catch (error) {
-                console.error('Failed to parse stored user data:', error);
-                localStorage.removeItem('user');
-            }
+        const storedUser = CookieService.getUser();
+        const hasToken = CookieService.isAuthenticated();
+        
+        if (storedUser && hasToken) {
+            dispatch({ type: 'AUTH_SUCCESS', payload: storedUser });
+        } else {
+            CookieService.clearAll();
         }
     }, []);
 

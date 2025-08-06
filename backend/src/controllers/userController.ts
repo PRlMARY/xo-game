@@ -1,4 +1,5 @@
 import bcrypt from 'bcrypt';
+import jwt from 'jsonwebtoken';
 import User from '../model/users';
 
 interface SignupRequest {
@@ -9,6 +10,7 @@ interface SignupRequest {
 interface SignupResponse {
     success: boolean;
     message: string;
+    token?: string;
     user?: {
         id: string;
         username: string;
@@ -59,9 +61,17 @@ export const signup = async (body: SignupRequest): Promise<SignupResponse> => {
 
         const savedUser = await newUser.save();
 
+        const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key';
+        const token = jwt.sign(
+            { userId: (savedUser._id as any).toString() },
+            JWT_SECRET,
+            { expiresIn: '3h' }
+        );
+
         return {
             success: true,
             message: 'User created successfully',
+            token,
             user: {
                 id: (savedUser._id as any).toString(),
                 username: savedUser.username,
@@ -113,9 +123,17 @@ export const login = async (body: { username: string; password: string }) => {
             };
         }
 
+        const JWT_SECRET = process.env.JWT_SECRET || 'fallback-secret-key';
+        const token = jwt.sign(
+            { userId: (user._id as any).toString() },
+            JWT_SECRET,
+            { expiresIn: '3h' }
+        );
+
         return {
             success: true,
             message: 'Login successful',
+            token,
             user: {
                 id: (user._id as any).toString(),
                 username: user.username,

@@ -120,7 +120,6 @@ export const useGame = ({ rows, columns, isPvP, onGameComplete }: UseGameProps) 
             onGameComplete(gameData);
         }
     }, [gameState.gameStatus, gameState.moves, gameState.winner, user, onGameComplete, isPvP, rows, columns]);
-
     return {
         gameState,
         makeMove,
